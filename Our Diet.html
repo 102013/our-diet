@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Our Diet</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: linear-gradient(to right, #a8edea, #fed6e3);
+            text-align: center;
+        }
+
+        header {
+            background: #2c7a7b;
+            color: white;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .search-box {
+            margin: 20px;
+        }
+
+        input {
+            padding: 10px;
+            width: 300px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #2c7a7b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            background: white;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            width: 280px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            text-align: left;
+        }
+
+        .card img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .day {
+            margin-top: 10px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+
+        .tips {
+            margin-top: 15px;
+            background: #f0fdfa;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .disclaimer {
+            margin: 30px;
+            font-size: 12px;
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🥗 Our Diet</h1>
+    <p>Your weekly diet planner</p>
+</header>
+
+<div class="search-box">
+    <input type="text" id="search" placeholder="Enter disease or goal (diabetes, weight loss, b12)">
+    <button onclick="searchDisease()">Search</button>
+</div>
+
+<div class="container" id="output"></div>
+
+<div class="disclaimer">
+    ⚠️ This website provides general diet suggestions and is not a substitute for professional medical advice.
+</div>
+
+<script>
+const dietPlans = {
+    diabetes: {
+        image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836",
+        tips: "Eat low sugar foods, increase fiber intake, and avoid soft drinks.",
+        days: {
+            Monday: ["Oats + nuts", "Brown rice + dal + salad", "Chapati + vegetables"],
+            Tuesday: ["Boiled eggs + toast", "Quinoa + veggies", "Soup + salad"],
+            Wednesday: ["Upma", "Chapati + sabzi", "Dal + salad"],
+            Thursday: ["Poha", "Rice + dal", "Vegetable soup"],
+            Friday: ["Oats", "Chapati + paneer", "Salad + soup"],
+            Saturday: ["Idli", "Rice + veggies", "Dal + chapati"],
+            Sunday: ["Daliya", "Brown rice + chicken", "Light salad"]
+        }
+    },
+
+    thyroid: {
+        image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061",
+        tips: "Include iodine-rich foods and maintain balanced protein intake.",
+        days: {
+            Monday: ["Boiled eggs", "Chapati + sabzi", "Soup"],
+            Tuesday: ["Oats", "Rice + dal", "Vegetables"],
+            Wednesday: ["Smoothie", "Chapati + paneer", "Salad"],
+            Thursday: ["Upma", "Rice + sabzi", "Soup"],
+            Friday: ["Poha", "Chapati + dal", "Vegetables"],
+            Saturday: ["Idli", "Rice + paneer", "Salad"],
+            Sunday: ["Daliya", "Chapati + chicken", "Soup"]
+        }
+    },
+
+    b12: {
+        image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd",
+        tips: "Eat milk, eggs, fish, chicken, yogurt, and fortified cereals for Vitamin B12.",
+        days: {
+            Monday: ["Milk + oats", "Chicken curry + rice", "Boiled eggs + salad"],
+            Tuesday: ["Paneer sandwich", "Fish + vegetables", "Soup + toast"],
+            Wednesday: ["Egg omelette", "Dal + rice + curd", "Paneer salad"],
+            Thursday: ["Banana shake", "Chicken + chapati", "Vegetable soup"],
+            Friday: ["Cornflakes + milk", "Paneer + rice", "Egg sandwich"],
+            Saturday: ["Idli + curd", "Fish curry + rice", "Salad + yogurt"],
+            Sunday: ["Smoothie", "Chicken salad", "Milk + nuts"]
+        }
+    },
+
+    "weight loss": {
+        image: "https://images.unsplash.com/photo-1498837167922-ddd27525d352",
+        tips: "Drink more water, avoid junk food, and focus on high-protein meals.",
+        days: {
+            Monday: ["Green tea + oats", "Grilled chicken salad", "Vegetable soup"],
+            Tuesday: ["Fruit bowl", "Brown rice + vegetables", "Salad + sprouts"],
+            Wednesday: ["Boiled eggs", "Quinoa + veggies", "Soup + paneer"],
+            Thursday: ["Smoothie", "Dal + chapati", "Light salad"],
+            Friday: ["Poha", "Chicken + vegetables", "Soup"],
+            Saturday: ["Oats + fruits", "Rice + dal", "Grilled paneer"],
+            Sunday: ["Green smoothie", "Salad + chicken", "Vegetable soup"]
+        }
+    },
+
+    "height gain": {
+        image: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc",
+        tips: "Eat protein-rich foods, calcium, and get enough sleep and exercise.",
+        days: {
+            Monday: ["Milk + banana", "Rice + chicken", "Paneer + chapati"],
+            Tuesday: ["Eggs + toast", "Dal + rice", "Milk + nuts"],
+            Wednesday: ["Smoothie", "Chicken salad", "Paneer curry"],
+            Thursday: ["Oats + milk", "Rice + fish", "Soup + vegetables"],
+            Friday: ["Boiled eggs", "Chapati + paneer", "Milkshake"],
+            Saturday: ["Banana shake", "Chicken + rice", "Salad + curd"],
+            Sunday: ["Cornflakes + milk", "Dal + chapati", "Fruits + nuts"]
+        }
+    }
+};
+
+function searchDisease() {
+    const input = document.getElementById("search").value.toLowerCase().trim();
+    const output = document.getElementById("output");
+    output.innerHTML = "";
+
+    if (dietPlans[input]) {
+        const plan = dietPlans[input];
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+            <img src="${plan.image}" alt="Food Image">
+            <h3>${input.toUpperCase()} Diet Plan</h3>
+            <div class="tips">💡 ${plan.tips}</div>
+        `;
+
+        for (let day in plan.days) {
+            const meals = plan.days[day];
+            card.innerHTML += `
+                <div class="day">
+                    <strong>${day}</strong><br>
+                    🥣 Breakfast: ${meals[0]}<br>
+                    🍛 Lunch: ${meals[1]}<br>
+                    🍲 Dinner: ${meals[2]}
+                </div>
+            `;
+        }
+
+        output.appendChild(card);
+
+    } else {
+        output.innerHTML = `
+            <p><strong>No diet plan found.</strong></p>
+            <p>Try searching: diabetes, thyroid, b12, weight loss, height gain</p>
+        `;
+    }
+}
+</script>
+
+</body>
+</html>
+
